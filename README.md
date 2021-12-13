@@ -15,7 +15,7 @@ This final project was created by students from the Georgia Institute of Technol
 
 ## Getting Started
 
-### Parts
+### Parts List
 
 * Mbed - LPC1768		
 
