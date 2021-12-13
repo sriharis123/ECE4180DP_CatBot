@@ -5,24 +5,8 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <termios.h>
-#include <gdk/gdkkeysyms.h>
-#include <pthread.h>
-
-#include <ctime>
-#include <fstream>
-#include <iostream>
-#include <unistd.h>
-#include <raspicam/raspicam.h>
-
-#include <glib.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
 
 int fd;
-GtkWidget *window;
-GtkWidget *fixed;
-GtkWidget *image;
-
-raspicam::RaspiCam Camera;
 
 void start_camera(GtkWidget *widget, gpointer data)
 {
@@ -56,7 +40,7 @@ void turn_right(GtkWidget *widget, gpointer data) // turn right
 
 void play_audio(GtkWidget *widget, gpointer data) // play audio
 {
-    write(fd, "5", 1);
+    system("play /home/pi/Music/CatTreats.wav");
 }
 
 void food_dispense(GtkWidget *widget, gpointer data) // dispense food
@@ -77,13 +61,13 @@ void camera_down(GtkWidget *widget, gpointer data) // camera down
 void toy_on(GtkWidget *widget, gpointer data) // toy on
 {
     write(fd, "9", 1);
-    sleep(2);
-    write(fd, "0", 1);
+    //sleep(2);
+    //write(fd, "0", 1);
 }
 
 void toy_off(GtkWidget *widget, gpointer data) // toy off
 {
-    write(fd, "10", 1);
+    write(fd, "A", 1);
 }
 
 gboolean key_handler(GtkWidget *widget, GdkEventKey *event, gpointer data) {
@@ -114,50 +98,6 @@ void reset(GtkWidget *widget, gpointer data) // reset
     write(fd, "0", 1);
 }
 
-gboolean image_thread(void *args) {
-    unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    //extract the image in rgb format
-    Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
-
-    gpointer data2;
-
-    image = gtk_image_new_from_pixbuf(gdk_pixbuf_new_from_data(data, GDK_COLORSPACE_RGB,
-            FALSE, 8, 320, 240, 32, NULL, data2));
-
-    //gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
-    //gtk_widget_set_size_request(image, 320, 240);
-
-    gtk_widget_queue_draw(image);
-    gtk_widget_queue_draw(window);
-    delete data;
-    return TRUE;
-}
-
-int cam_init() {
-    //Open camera 
-    std::cout<<"Opening Camera..."<<std::endl;
-
-    Camera.setCaptureSize(320, 240);
-
-    if ( !Camera.open()) {std::cerr<<"Error opening camera"<<std::endl;return -1;}
-    //wait a while until camera stabilizes
-    std::cout<<"Sleeping for 3 secs"<<std::endl;
-    sleep(3);
-    //capture
-    Camera.grab();
-    //allocate memory
-    unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    //extract the image in rgb format
-    Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
-    //save
-    std::ofstream outFile ( "test.png",std::ios::binary );
-    outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
-    outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
-    //free resrources    
-    delete data;
-    return 0;
-}
-
 int main(int argc, char *argv[])
 {
     //int fd;
@@ -184,9 +124,8 @@ int main(int argc, char *argv[])
     tcsetattr(fd, TCSANOW, &options); //Set serial to new settings
     sleep(1);
 
-    int x = cam_init();
-
-    if (x == -1) return -1;
+    GtkWidget *window;
+    GtkWidget *fixed;
 
     GtkWidget *btn_reset;     //reset
     GtkWidget *btn_forward;   //forward
@@ -206,7 +145,7 @@ int main(int argc, char *argv[])
 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "CatBot");
-    gtk_window_set_default_size(GTK_WINDOW(window), 920, 260);
+    gtk_window_set_default_size(GTK_WINDOW(window), 560, 260);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
     fixed = gtk_fixed_new();
@@ -216,19 +155,19 @@ int main(int argc, char *argv[])
     gtk_fixed_put(GTK_FIXED(fixed), btn_reset, 270, 90);
     gtk_widget_set_size_request(btn_reset, 80, 30);
 
-    btn_forward = gtk_button_new_with_label("Forward");
+    btn_forward = gtk_button_new_with_label("Forward(W)");
     gtk_fixed_put(GTK_FIXED(fixed), btn_forward, 260, 50);
     gtk_widget_set_size_request(btn_forward, 80, 30);
 
-    btn_backward = gtk_button_new_with_label("Backward");
+    btn_backward = gtk_button_new_with_label("Backward(S)");
     gtk_fixed_put(GTK_FIXED(fixed), btn_backward, 260, 130);
     gtk_widget_set_size_request(btn_backward, 80, 30);
 
-    btn_left = gtk_button_new_with_label("Left");
+    btn_left = gtk_button_new_with_label("Left(A)");
     gtk_fixed_put(GTK_FIXED(fixed), btn_left, 180, 90);
     gtk_widget_set_size_request(btn_left, 80, 30);
 
-    btn_right = gtk_button_new_with_label("Right");
+    btn_right = gtk_button_new_with_label("Right(D)");
     gtk_fixed_put(GTK_FIXED(fixed), btn_right, 360, 90);
     gtk_widget_set_size_request(btn_right, 80, 30);
 
@@ -263,13 +202,7 @@ int main(int argc, char *argv[])
     btn_cam_stop = gtk_button_new_with_label("Stop Camera");
     gtk_fixed_put(GTK_FIXED(fixed), btn_cam_stop, 20, 140);
     gtk_widget_set_size_request(btn_cam_stop, 80, 30);
-
-
-    image = gtk_image_new_from_file("test.png");
-    gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
-    gtk_widget_set_size_request(image, 320, 240);
-
-
+    
     gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
 
     // Connected buttons
@@ -323,28 +256,20 @@ int main(int argc, char *argv[])
 
     g_signal_connect(G_OBJECT(btn_right), "released", // release reset
                      G_CALLBACK(reset), NULL);
-
+                     
     g_signal_connect(G_OBJECT(window), "key_press_event", // release reset
                      G_CALLBACK(key_handler), NULL);
                      
     g_signal_connect(G_OBJECT(window), "key_release_event", // release reset
                      G_CALLBACK(reset), NULL);
+        
 
     g_signal_connect(G_OBJECT(window), "destroy",
                      G_CALLBACK(gtk_main_quit), NULL);
 
     gtk_widget_show_all(window);
 
-    /* pthread_t image_updater;
-    pthread_create(&image_updater, NULL, image_thread, NULL);
-    pthread_detach(image_updater); */
-    //g_thread_init (NULL);
-    //gdk_threads_init ();
-    //gdk_threads_enter ();
-    //gdk_threads_add_timeout(1000, image_thread, NULL);
-
     gtk_main();
-    //gdk_threads_leave ();
 
     // Don't forget to clean up and close the port
     tcdrain(fd);
