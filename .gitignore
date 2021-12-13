@@ -1,0 +1,6 @@
+*.cmake
+*.make
+*.internal
+*.o
+*.marks
+build/
