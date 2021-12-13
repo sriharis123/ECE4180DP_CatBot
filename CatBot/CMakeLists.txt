@@ -1,6 +1,6 @@
 
 cmake_minimum_required (VERSION 3.14)
-project (hello-gtk)
+project (catbot)
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     find_package(PkgConfig REQUIRED)
@@ -30,7 +30,7 @@ find_package(raspicam REQUIRED)
 link_libraries (${raspicam_LIBS})
 
 
-add_executable (gtk-test Catbot_GTK_app.cpp)
+add_executable (catbot-app Catbot_GTK_app.cpp)
 
 #add_definitions (${GTK3_CFLAGS_OTHER})
 message(STATUS "----- ${GTK3_CFLAGS_OTHER}")

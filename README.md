@@ -15,6 +15,19 @@ This final project was created by students from the Georgia Institute of Technol
 
 ## Getting Started
 
+# Setup Instructions
+
+```
+mkdir build
+cd build
+cmake ..
+make clean
+make
+./catbot-app
+```
+
+You might have to install libraries such as raspicam and GTK+-3.0
+
 ### Parts List
 
 * Mbed - LPC1768		
