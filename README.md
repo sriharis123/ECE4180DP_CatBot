@@ -7,7 +7,7 @@
 * Wesley Sweeney
 * Yvan Tamba
 
-## Overview
+## Introduction
 
 The CatBot is a home robot designed for pets, with the ability to dispense treats and play with the pet. The best part? It can be controlled with an user interface from anywhere in the world. 
 
