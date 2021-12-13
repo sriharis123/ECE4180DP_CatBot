@@ -55,4 +55,12 @@ This final project was created by students from the Georgia Institute of Technol
 
 * Animal food bowl							
 
-* USB Audio Speaker							
+* USB Audio Speaker	
+
+
+### Hardware Wiring 
+
+<p align="center">
+"CatBot_WiringDiagram.png" width="400">
+</p>
+
