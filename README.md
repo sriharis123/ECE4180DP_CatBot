@@ -61,6 +61,6 @@ This final project was created by students from the Georgia Institute of Technol
 ### Hardware Wiring 
 
 <p align="center">
-"CatBot_WiringDiagram.png" width="400">
+"https://github.com/sriharis123/ECE4180DP_RemoteCatFeeder/blob/a167b007452f518ca2f4a7ae60c729ec69364e20/CatBot_WiringDiagram.png" width="400">
 </p>
 
