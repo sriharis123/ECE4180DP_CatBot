@@ -1,4 +1,4 @@
-# CATBOT
+# ECE4180 DESIGN PROJECT - CATBOT
 
 ## Developers
 
