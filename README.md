@@ -15,9 +15,10 @@ This final project was created by students from the Georgia Institute of Technol
 
 ## Getting Started
 
-# Setup Instructions
+### Setup Instructions
 
 ```
+cd CatBot
 mkdir build
 cd build
 cmake ..
