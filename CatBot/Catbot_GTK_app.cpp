@@ -23,14 +23,18 @@ GtkWidget *image;
 
 raspicam::RaspiCam Camera;
 
+int cam_on = 0;
+
 void start_camera(GtkWidget *widget, gpointer data)
 {
-    system("raspivid -p 50,100,400,300 -k&\n");
+    //system("raspivid -p 50,100,400,300 -k&\n");
+    cam_on = 1;
 }
 
 void stop_camera(GtkWidget *widget, gpointer data)
 {
-    system("pkill raspivid");
+    //system("pkill raspivid");
+    cam_on = -1;
 }
 
 void move_forward(GtkWidget *widget, gpointer data) // move forward
@@ -112,23 +116,31 @@ void reset(GtkWidget *widget, gpointer data) // reset
 }
 
 gboolean image_thread(void *args) {
+    if (cam_on == 1) {
+        Camera.setCaptureSize(320, 240);
+        Camera.grab();
+        unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
+        Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
 
-    Camera.setCaptureSize(320, 240);
-    Camera.grab();
-    unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
+        std::ofstream outFile ( "test.png",std::ios::binary );
+        outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
+        outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
+        
+        image = gtk_image_new_from_file("test.png");
+        gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
+        gtk_widget_set_size_request(image, 320, 240);
 
-    std::ofstream outFile ( "test.png",std::ios::binary );
-    outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
-    outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
-    
-    image = gtk_image_new_from_file("test.png");
-    gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
-    gtk_widget_set_size_request(image, 320, 240);
-
-    gtk_widget_queue_draw(image);
-    gtk_widget_show_all(window);
-    delete data;
+        gtk_widget_queue_draw(image);
+        gtk_widget_show_all(window);
+        delete data;
+    } else if (cam_on == -1) {
+        image = gtk_image_new_from_file("blank.png");
+        gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
+        gtk_widget_set_size_request(image, 320, 240);
+        gtk_widget_queue_draw(image);
+        gtk_widget_show_all(window);
+        cam_on = 0;
+    }
     return TRUE;
 }
 
@@ -142,15 +154,15 @@ int cam_init() {
     //wait a while until camera stabilizes
     sleep(3);
 
-    Camera.grab();
-    unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );
+    //Camera.grab();
+    //unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
+    //Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );
 
-    std::ofstream outFile ( "test.png",std::ios::binary );
-    outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
-    outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
+    //std::ofstream outFile ( "test.png",std::ios::binary );
+    //outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
+    //outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
 
-    delete data;
+    //delete data;
     return 0;
 }
 
@@ -258,7 +270,7 @@ int main(int argc, char *argv[])
     gtk_fixed_put(GTK_FIXED(fixed), btn_cam_stop, 20, 140);
     gtk_widget_set_size_request(btn_cam_stop, 80, 30);
 
-    image = gtk_image_new_from_file("test.png");
+    image = gtk_image_new_from_file("blank.png");
     gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
     gtk_widget_set_size_request(image, 320, 240);
     
