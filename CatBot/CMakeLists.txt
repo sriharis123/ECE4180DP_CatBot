@@ -37,4 +37,4 @@ message(STATUS "----- ${GTK3_CFLAGS_OTHER}")
 
 
 
-target_link_libraries (gtk-test ${FC_DEP_LIBS})
+target_link_libraries (catbot-app ${FC_DEP_LIBS})
