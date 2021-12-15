@@ -76,6 +76,16 @@ You might have to install libraries such as raspicam and GTK+-3.0. You can find 
 
 ### Hardware Wiring 
 
-![WiringDiagram](CatBot_WiringDiagram.jpg)
+![WiringDiagram](Pictures/CatBot_WiringDiagram.jpg)
+
+## Demo Video
+
+[![Demo Video](https://img.youtube.com/vi/HfBlcRMxEek/maxresdefault.jpg)](https://youtu.be/HfBlcRMxEek)
+
+## More Pictures
+
+![Front](Pictures/CatBotFront2.jpg)
+![Left](Pictures/CatBotLeft.jpg)
+![Right](Pictures/CatBotRight.jpg)
 
 
