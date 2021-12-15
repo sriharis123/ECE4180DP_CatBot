@@ -1,5 +1,7 @@
 # ECE4180 DESIGN PROJECT - CATBOT
 
+![Robot](CatBot_Robot.jpg)
+
 ## Developers
 
 * Zara Dash
@@ -74,6 +76,6 @@ You might have to install libraries such as raspicam and GTK+-3.0
 
 ### Hardware Wiring 
 
-![WiringDiagram](CatBot_WiringDiagram.png)
+![WiringDiagram](CatBot_WiringDiagram.jpg)
 
 
