@@ -25,68 +25,107 @@ raspicam::RaspiCam Camera;
 
 int cam_on = -1;
 
+/**
+ * Starts camera by setting control value to 1
+ */
 void start_camera(GtkWidget *widget, gpointer data)
 {
     //system("raspivid -p 50,100,400,300 -k&\n");
     cam_on = 1;
 }
 
+/**
+ * Starts camera by setting control value to -1
+ */
 void stop_camera(GtkWidget *widget, gpointer data)
 {
     //system("pkill raspivid");
     cam_on = -1;
 }
 
+/**
+ * Sends move forward command to mbed
+ */
 void move_forward(GtkWidget *widget, gpointer data) // move forward
 {
     write(fd, "1", 1);
 }
 
+/**
+ * Sends move backwards command to mbed
+ */
 void move_backwards(GtkWidget *widget, gpointer data) // move reverse
 {
     write(fd, "2", 1);
 }
 
+/**
+ * Sends turn left command to mbed
+ */
 void turn_left(GtkWidget *widget, gpointer data) // turn left
 {
     write(fd, "3", 1);
 }
 
+/**
+ * Sends turn right command to mbed
+ */
 void turn_right(GtkWidget *widget, gpointer data) // turn right
 {
     write(fd, "4", 1);
 }
 
+/**
+ * Plays audio on the speaker
+ */
 void play_audio(GtkWidget *widget, gpointer data) // play audio
 {
     system("play /home/pi/Music/CatTreats.wav");
 }
 
+/**
+ * Sends dispense command to mbed
+ */
 void food_dispense(GtkWidget *widget, gpointer data) // dispense food
 {
     write(fd, "6", 1);
 }
 
+/**
+ * Sends cam up command to mbed
+ */
 void camera_up(GtkWidget *widget, gpointer data) // camera up
 {
     write(fd, "7", 1);
 }
 
+/**
+ * Sends cam down command to mbed
+ */
 void camera_down(GtkWidget *widget, gpointer data) // camera down
 {
     write(fd, "8", 1);
 }
 
+/**
+ * Sends toy on command to mbed
+ */
 void toy_on(GtkWidget *widget, gpointer data) // toy on
 {
     write(fd, "9", 1);
 }
 
+/**
+ * Sends toy off command to mbed
+ */
 void toy_off(GtkWidget *widget, gpointer data) // toy off
 {
     write(fd, "A", 1);
 }
 
+/**
+ * Key handler to send movement commands to mbed
+ */
 gboolean key_handler(GtkWidget *widget, GdkEventKey *event, gpointer data) {
     //printf(event->keyval);
     switch (event->keyval) {
@@ -110,11 +149,18 @@ gboolean key_handler(GtkWidget *widget, GdkEventKey *event, gpointer data) {
     return FALSE;
 }
 
+/**
+ * Sends reset command to mbed. Stops mbed completely.
+ */
 void reset(GtkWidget *widget, gpointer data) // reset
 {
     write(fd, "0", 1);
 }
 
+/**
+ * Image thread. Called 5 times a second to display the current camera image.
+ * Currently has high latency due to file I/O but could be improved with DMA.
+ */
 gboolean image_thread(void *args) {
     if (cam_on == 1) {
         Camera.setCaptureSize(320, 240);
@@ -144,6 +190,9 @@ gboolean image_thread(void *args) {
     return TRUE;
 }
 
+/**
+ * Initializes camera.
+ */
 int cam_init() {
     //Open camera 
     std::cout<<"Opening Camera..."<<std::endl;
@@ -157,6 +206,10 @@ int cam_init() {
     return 0;
 }
 
+/**
+ * Main method sets up communication with mbed and generates GTK widgets.
+ * Begins camera thread and defines callbacks for action events on buttons.
+ */
 int main(int argc, char *argv[])
 {
     //int fd;

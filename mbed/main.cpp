@@ -1,10 +1,6 @@
-
-
 #include "Motor.h"
 #include "HALLFX_ENCODER.h"
 #include "Servo.h"
-
-
 
 Motor Wheel_Left(p21, p6, p5); // pwm, fwd, rev 
 Motor Wheel_Right(p22, p8, p7); // pwm, fwd, rev
@@ -24,10 +20,6 @@ DigitalOut myled4(LED4);
 
 volatile char bnum = 0;
 
-
-
-
-
 int main() 
 {
     // Setup pi
@@ -35,24 +27,20 @@ int main()
     //pi.attach(&dev_recv, Serial::RxIrq);
     
     float camera_location = 0.5;
-    
     Servo_Food = 0;
-    
     
     while(1)
     {
         // Get command over serial 
-        /*char temp = 0;*/
         myled1 = !myled1;
         while(pi.readable()) 
         {
             myled1 = !myled1;
             bnum = pi.getc();
-            //pi.putc(bnum);
             // Control Section
             switch(bnum)
             {
-                case '0':
+                case '0': // reset mbed
                     Motor_Toy = 0;
                     Servo_Food = 0;
                     Servo_Camera = 0.5;
@@ -94,54 +82,7 @@ int main()
                         bnum = pi.getc(); 
                     }
                     Wheel_Left.speed(0);
-                    Wheel_Right.speed(0);                   
-                    
-                    /*// reset both encoders
-                    Wheel_Encoder_Left.reset();
-                    Wheel_Encoder_Right.reset();
-                    int count = 0;
-                    
-                    Wheel_Left.speed(-0.6);
-                    Wheel_Right.speed(-0.6);
-                    wait(0.4);
-                    
-                    
-                    //fwd is -1, reverse is 1
-                    for (float s = -0.2; s > -1.0; s -= 0.01)
-                    {
-                        Wheel_Left.speed(s);
-                        Wheel_Right.speed(s);
-                        count++;
-                        wait(0.02);
-                        //count is just an interval to check the location.
-                        if (count == 20)
-                        {
-                            // Get positions of both encoders
-                            int leftWheelPosition = Wheel_Encoder_Left.read();
-                            int rightWheelPosition = Wheel_Encoder_Right.read();
-                            //adjust left wheel to catch up with right
-                            while (leftWheelPosition < rightWheelPosition)
-                            {
-                                Wheel_Right.speed(s+.5);
-                                leftWheelPosition = Wheel_Encoder_Left.read();
-                                wait(0.02);
-                            }
-                            while (rightWheelPosition < leftWheelPosition)
-                            {
-                                Wheel_Left.speed(s+.5); 
-                                rightWheelPosition = Wheel_Encoder_Right.read(); 
-                                wait(0.02);
-                            }
-                            Wheel_Encoder_Left.reset();
-                            Wheel_Encoder_Right.reset();
-                            count = 0;      
-                        }
-                    }
-                    Wheel_Left.speed(-1);
-                    Wheel_Right.speed(-1);
-                    
-                    //Wheel_Left.speed(0);
-                    //Wheel_Right.speed(0);*/
+                    Wheel_Right.speed(0);
                     break;
                 case '2': // move backwards
                     Wheel_Left.speed(1.0);
@@ -178,72 +119,15 @@ int main()
                         bnum = pi.getc(); 
                     }
                     Wheel_Left.speed(0);
-                    Wheel_Right.speed(0);     
-                    
-                    /*// reset both encoders
-                    Wheel_Encoder_Left.reset();
-                    Wheel_Encoder_Right.reset();
-                    int count_b = 0;
-                    
-                    Wheel_Left.speed(0.6);
-                    Wheel_Right.speed(0.6);
-                    wait(0.4);
-
-                    //fwd is -1, reverse is 1
-                    for (float s = 0.2; s < 1.0; s += 0.01)
-                    {
-                        
-                        Wheel_Left.speed(s);
-                        Wheel_Right.speed(s);
-                        count_b++;
-                        wait(0.02);
-                        //count is just an interval to check the location.
-                        if (count_b == 20)
-                        {
-                            // Get positions of both encoders
-                            int leftWheelPosition = Wheel_Encoder_Left.read();
-                            int rightWheelPosition = Wheel_Encoder_Right.read();
-                            //adjust left wheel to catch up with right
-                            while (leftWheelPosition < rightWheelPosition)
-                            {
-                                Wheel_Right.speed(s+.5);
-                                leftWheelPosition = Wheel_Encoder_Left.read();
-                                wait(0.02);
-                            }
-                            while (rightWheelPosition < leftWheelPosition)
-                            {
-                                Wheel_Left.speed(s+.5); 
-                                rightWheelPosition = Wheel_Encoder_Right.read(); 
-                                wait(0.02);
-                            }
-                            Wheel_Encoder_Left.reset();
-                            Wheel_Encoder_Right.reset();
-                            count_b = 0;      
-                        }
-                    }
-                    Wheel_Left.speed(1);
-                    Wheel_Right.speed(1);
-                    //wait(.5);
-                    //Wheel_Left.speed(0);
-                    //Wheel_Right.speed(0);*/
+                    Wheel_Right.speed(0);
                     break;
                 case '3': // turn left
                     Wheel_Left.speed(0.8);
                     Wheel_Right.speed(-0.8);
-                    
-                         
-                    //wait(.5);
-                    //Wheel_Left.speed(0);
-                    //Wheel_Right.speed(0);
                     break;
                 case '4': // turn right
                     Wheel_Left.speed(-0.8);
                     Wheel_Right.speed(0.8);
-                    
-                      
-                    //wait(.5);
-                    //Wheel_Left.speed(0);
-                    //Wheel_Right.speed(0);
                     break;
                 case '5': // play audio
                     // Not used
@@ -277,18 +161,11 @@ int main()
                 case 'A': // toy off
                     Motor_Toy = 0;
                     break;
-                 
-                    
                 default:
                     //Motor_Toy = 0;
                     Servo_Food = 0;
-                    
-                       
             }
             wait(0.2);
         }
-        
-        
-        
     }
 }
