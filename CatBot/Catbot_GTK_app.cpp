@@ -132,7 +132,7 @@ gboolean image_thread(void *args) {
 
         gtk_widget_queue_draw(image);
         gtk_widget_show_all(window);
-        delete data;
+        delete [] data;
     } else if (cam_on == -1) {
         image = gtk_image_new_from_file("blank.png");
         gtk_fixed_put(GTK_FIXED(fixed), image, 580, 10);
@@ -154,15 +154,6 @@ int cam_init() {
     //wait a while until camera stabilizes
     sleep(3);
 
-    //Camera.grab();
-    //unsigned char *data=new unsigned char[  Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
-    //Camera.retrieve ( data,raspicam::RASPICAM_FORMAT_RGB );
-
-    //std::ofstream outFile ( "test.png",std::ios::binary );
-    //outFile<<"P6\n"<<Camera.getWidth() <<" "<<Camera.getHeight() <<" 255\n";
-    //outFile.write ( ( char* ) data, Camera.getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ) );
-
-    //delete data;
     return 0;
 }
 
