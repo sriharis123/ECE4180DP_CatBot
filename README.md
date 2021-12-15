@@ -1,6 +1,6 @@
 # ECE4180 DESIGN PROJECT - CATBOT
 
-![Robot](CatBot_Robot.jpg)
+![Robot](CatBot_Robot.JPG)
 
 ## Developers
 
