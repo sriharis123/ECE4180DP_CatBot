@@ -29,7 +29,7 @@ make
 ./catbot-app
 ```
 
-You might have to install libraries such as raspicam and GTK+-3.0
+You might have to install libraries such as raspicam and GTK+-3.0. You can find raspicam here: https://sourceforge.net/projects/raspicam/files/. Follow the instructions in the readme to install from source. For gtk+-3.0, install by running `sudo apt-get install libgtk-3-dev`
 
 ### Parts List
 
